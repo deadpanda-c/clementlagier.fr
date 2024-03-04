@@ -40,6 +40,5 @@ export const GET = async (req) => {
     },
   });
 
-  console.log(user);
   return NextResponse.json({ message: 'Hello, World!' });
 };
