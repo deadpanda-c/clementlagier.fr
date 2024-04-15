@@ -27,4 +27,4 @@ jobs:
         mkdir -p ~/.ssh/
         echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh -i ~/.ssh/id_rsa ${{ env.PROD_USERNAME }}@${{ env.PROD_HOST }} '/bin/date'
+        ssh -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa ${{ env.PROD_USERNAME }}@${{ env.PROD_HOST }} '/bin/date'
