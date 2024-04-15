@@ -18,7 +18,7 @@ jobs:
       run: |
         echo "Installing Depedencies..."
 
-    - name: Deploy to Production
+    - name: Configure SSH
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         PROD_USERNAME: ${{ vars.USERNAME }}
@@ -27,4 +27,8 @@ jobs:
         mkdir -p ~/.ssh/
         echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa ${{ env.PROD_USERNAME }}@${{ env.PROD_HOST }} '/bin/date'
+        ssh-keyscan -H -t rsa ${{ env.PROD_HOST }} >> ~/.ssh/known_hosts
+    - name: Deploy to Production Server
+      run: |
+        ssh -i ~/.ssh/id_rsa ${{ env.PROD_USERNAME }}@${{ env.PROD_HOST }} "/bin/date"
+
