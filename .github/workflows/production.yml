@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  PROD_HOST: ${{ vars.HOST }} 
+  PROD_USERNAME: ${{ vars.USERNAME }}
+
 jobs:
   deploy:
     name: Deploy to Production Server
@@ -21,8 +25,6 @@ jobs:
     - name: Configure SSH
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        PROD_USERNAME: ${{ vars.USERNAME }}
-        PROD_HOST: ${{ vars.HOST }} 
       run: |
         mkdir -p ~/.ssh/
         echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
