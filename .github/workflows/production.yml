@@ -1,19 +1,28 @@
-name: Deploy to Production
+name: Production Deployment
 
 on:
   push:
     branches:
       - main
 
-env:
-  PROD_HOST: $HOST
-  PROD_USERNAME: $USERNAME
-
 jobs:
   deploy:
+    name: Deploy to Production Server
     runs-on: ubuntu-latest
-
+    
     steps:
-      - uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secret.SSH_PRIVATE_KEY }}
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Install Dependencies
+      run: |
+        echo "Installing Depedencies..."
+
+    - name: Deploy to Production
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        mkdir -p ~/.ssh/
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh -o StrictHostKeyChecking=no ${{ env.PROD_USERNAME }}@${{ env.PROD_HOST }} '/bin/date'
