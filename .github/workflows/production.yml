@@ -27,9 +27,8 @@ jobs:
         mkdir -p ~/.ssh/
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H -t rsa github.com >> ~/.ssh/known_hosts
-        ssh-keyscan -H -t rsa ${{ env.PROD_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan -H ${{ env.PROD_HOST }} >> ~/.ssh/known_hosts
 
     - name: Deploy to Production Server
-      run: ssh -i ~/.ssh/id_rsa ${{ env.PROD_USERNAME }}@${{ env.PROD_HOST }} "/bin/date"
+      run: ssh ${{ env.PROD_USERNAME }}@${{ env.PROD_HOST }} "/bin/date"
 
