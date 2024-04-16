@@ -31,5 +31,5 @@ jobs:
         ssh-keyscan -H ${{ env.PROD_HOST }} >> ~/.ssh/known_hosts
 
     - name: Deploy to Production Server
-      run: ls -l ~/.ssh
+      run: ssh -i ~/.ssh/id_rsa ubuntu@clementlagier.fr "/bin/date"
 
