@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-import TerminalHeader from '@/components/terminal-header';
+import TerminalHeader from '@/components/terminal/terminal-header';
 import LoadingIndicator from '@/components/loading-indicator';
 
 interface Line {

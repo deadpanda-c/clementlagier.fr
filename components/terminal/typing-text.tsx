@@ -1,7 +1,7 @@
 'use-client';
 
 import { useEffect, useState } from 'react';
-import TypingLine from '@/components/typing-line';
+import TypingLine from '@/components/terminal/typing-line';
 
 interface TypingTextProps {
   lines: Array<{
