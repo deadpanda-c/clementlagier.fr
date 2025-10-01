@@ -3,7 +3,15 @@
 import { useEffect, useState } from 'react';
 import TypingLine from '@/components/typing-line';
 
-const TypingText = ({ lines }) => {
+interface TypingTextProps {
+  lines: Array<{
+    text: string;
+    delay: number;
+    className?: string;
+  }>;
+}
+
+const TypingText = ({ lines }: TypingTextProps) => {
   const [displayedLines, setDisplayedLines] = useState(lines.map(() => ''));
   const [activeLineIndex, setActiveLineIndex] = useState(0);
   const [showCursors, setShowCursors] = useState(lines.map(() => false));

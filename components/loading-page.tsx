@@ -4,9 +4,14 @@ import { useEffect, useState } from 'react';
 import TerminalHeader from '@/components/terminal-header';
 import LoadingIndicator from '@/components/loading-indicator';
 
+interface Line {
+  text: string;
+  timestamp: string;
+  id: number;
+}
 
 const LoadingPage = () => {
-  const [lines, setLines] = useState([]);
+  const [lines, setLines] = useState<Line[]>([]);
   const [dots, setDots] = useState('');
 
   const commands = [

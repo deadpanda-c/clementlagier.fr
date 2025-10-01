@@ -1,7 +1,7 @@
 'use client';
 
 interface LoadingIndicatorProps {
-  dots: boolean;
+  dots: string;
 }
 
 const LoadingIndicator = ( { dots }: LoadingIndicatorProps ) => {

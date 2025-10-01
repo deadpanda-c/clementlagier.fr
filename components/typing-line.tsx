@@ -1,6 +1,14 @@
 'use client';
 
-const TypingLine = ({ text, isActive, isCompleted, showCursor, className }) => {
+interface TypingLineProps {
+  text: string;
+  isActive: boolean;
+  isCompleted: boolean;
+  showCursor: boolean;
+  className?: string;
+}
+
+const TypingLine = ({ text, isActive, isCompleted, showCursor, className } : TypingLineProps) => {
   return (
     <div className={className}>
       <span>{text}</span>
