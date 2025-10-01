@@ -40,7 +40,7 @@ const LoadingPage = ({ onLoad }: LoadingPageProps) => {
         const newLines = [...prev, { text: randomCmd, timestamp, id: Date.now() }];
         return newLines.slice(-12);
       });
-    }, 400);
+    }, 300);
 
     return () => clearInterval(interval);
   }, []);
@@ -56,7 +56,7 @@ const LoadingPage = ({ onLoad }: LoadingPageProps) => {
   return (
     <div className="min-h-screen bg-black text-green-400 font-mono p-8 flex flex-col">
       {/* Terminal Header */}
-      <TerminalHeader />
+      <TerminalHeader isLoading={true} />
 
       {/* Terminal Content */}
       <div className="flex-1 overflow-hidden">
