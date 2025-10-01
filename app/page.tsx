@@ -19,7 +19,6 @@ export default function LandingPage() {
   }, []);
 
   return(
-    isLoaded ? <HomePage /> : <LoadingPage onLoad={load} />
-
+    isLoaded ? <HomePage /> : <LoadingPage />
   );
 }
