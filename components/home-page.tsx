@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import TerminalHeader from '@/components/terminal-header';
 
 import TypingText from '@/components/typing-text';
