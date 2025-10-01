@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 import LoadingPage from '@/components/loading-page';
-import HomePage from '@/components/home-page';
+import MenuPage from '@/components/menu-page';
 
 export default function LandingPage() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -19,6 +19,6 @@ export default function LandingPage() {
   }, []);
 
   return(
-    isLoaded ? <HomePage /> : <LoadingPage />
+    isLoaded ? <MenuPage /> : <LoadingPage />
   );
 }
