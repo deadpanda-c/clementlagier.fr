@@ -17,6 +17,9 @@ const CTAButton = ({ text, onClick, className }: CTAButtonProps) => {
         onClick={onClick}
         className={className}
         sx={{
+          size: "large",
+          fontSize: "1.5rem",
+          padding: "12px 28px",
           borderColor: "#4ade80",
           color: "#4ade80",
           "&:hover": {
