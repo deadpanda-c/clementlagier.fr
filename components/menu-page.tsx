@@ -19,7 +19,7 @@ const MenuPage = () => {
         <div className="text-center">
           <TypingText lines={lines} />
           <div className="mt-16 flex flex-col items-center">
-            <CTAButton text="Enter the matrix" onClick={() => alert("Get started")} 
+            <CTAButton text="Enter the matrix" onClick={() => window.location.href = "/matrix"}
               className="bg-green-500 hover text-white font-bold py-2 px-4 rounded-full" />
           </div>
         </div>
