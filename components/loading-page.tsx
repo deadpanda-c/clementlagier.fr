@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 import TerminalHeader from '@/components/terminal/terminal-header';
 import LoadingIndicator from '@/components/loading-indicator';
@@ -14,7 +14,7 @@ const LoadingPage = () => {
   const [lines, setLines] = useState<Line[]>([]);
   const [dots, setDots] = useState('');
 
-  const commands = [
+  const commands = useMemo(() => [
     'Initializing system modules...',
     'Loading configuration files...',
     'Connecting to database...',
@@ -31,7 +31,7 @@ const LoadingPage = () => {
     'Validating credentials...',
     'Bootstrapping application...',
     'Starting application...',
-  ];
+  ], []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,7 +45,7 @@ const LoadingPage = () => {
     }, 300);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [commands]);
 
   useEffect(() => {
     const dotsInterval = setInterval(() => {
@@ -58,7 +58,7 @@ const LoadingPage = () => {
   return (
     <div className="min-h-screen bg-black text-green-400 font-mono p-8 flex flex-col">
       {/* Terminal Header */}
-      <TerminalHeader isLoading={true} />
+      <TerminalHeader displayPrompt={true} />
 
       {/* Terminal Content */}
       <div className="flex-1 overflow-hidden">
