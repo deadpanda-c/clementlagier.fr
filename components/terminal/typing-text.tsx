@@ -8,60 +8,77 @@ interface TypingTextProps {
     text: string;
     delay: number;
     className?: string;
+    isPreformatted?: boolean;
   }>;
+  onComplete?: () => void;
 }
 
-const TypingText = ({ lines }: TypingTextProps) => {
+const TypingText = ({ lines, onComplete }: TypingTextProps) => {
   const [displayedLines, setDisplayedLines] = useState(lines.map(() => ''));
   const [activeLineIndex, setActiveLineIndex] = useState(0);
   const [showCursors, setShowCursors] = useState(lines.map(() => false));
   const [completedLines, setCompletedLines] = useState(lines.map(() => false));
 
   useEffect(() => {
-    if (activeLineIndex >= lines.length) return;
+    if (activeLineIndex >= lines.length) {
+      // All lines completed, notify parent
+      if (onComplete) {
+        setTimeout(() => onComplete(), 500);
+      }
+      return;
+    }
 
     const currentLine = lines[activeLineIndex];
     const startTimeout = setTimeout(() => {
-
       // Mark line as active
       setShowCursors(prev => {
         const newCursors = [...prev];
         newCursors[activeLineIndex] = true;
         return newCursors;
-      });
-
-      // Start typing
-      let currentIndex = 0;
-      const typingInterval = setInterval(() => {
-        if (currentIndex <= currentLine.text.length) {
-          setDisplayedLines(prev => {
-            const newLines = [...prev];
-            newLines[activeLineIndex] = currentLine.text.slice(0, currentIndex);
-            return newLines;
-          });
-          currentIndex++;
-        } else {
-          clearInterval(typingInterval);
-
-          // Mark line as completed
-          setCompletedLines(prev => {
-            const newCompleted = [...prev];
-            newCompleted[activeLineIndex] = true;
-            return newCompleted;
-          });
-
-          // Move to next line after finishing current one
-          setTimeout(() => {
-            setActiveLineIndex(prev => prev + 1);
-          }, 500);
-        }
-      }, 100);
-
-      return () => clearInterval(typingInterval);
+      });    
+      
+      if (currentLine.isPreformatted) {
+        setDisplayedLines(prev => {
+          const newLines = [...prev];
+          newLines[activeLineIndex] = currentLine.text;
+          return newLines;
+        });
+        setCompletedLines(prev => {
+          const newCompleted = [...prev];
+          newCompleted[activeLineIndex] = true;
+          return newCompleted;
+        });
+        setTimeout(() => {
+          setActiveLineIndex(prev => prev + 1);
+        }, 50);
+      } else {
+        let currentIndex = 0;
+        const typingInterval = setInterval(() => {
+          if (currentIndex <= currentLine.text.length) {
+            setDisplayedLines(prev => {
+              const newLines = [...prev];
+              newLines[activeLineIndex] = currentLine.text.slice(0, currentIndex);
+              return newLines;
+            });
+            currentIndex++;
+          } else {
+            clearInterval(typingInterval);
+            setCompletedLines(prev => {
+              const newCompleted = [...prev];
+              newCompleted[activeLineIndex] = true;
+              return newCompleted;
+            });
+            setTimeout(() => {
+              setActiveLineIndex(prev => prev + 1);
+            }, 50);
+          }
+        }, 20);
+        return () => clearInterval(typingInterval);
+      }
     }, currentLine.delay);
 
     return () => clearTimeout(startTimeout);
-  }, [activeLineIndex, lines]);
+  }, [activeLineIndex, lines, onComplete]);
 
   // Blink cursors
   useEffect(() => {
@@ -93,6 +110,7 @@ const TypingText = ({ lines }: TypingTextProps) => {
           isCompleted={completedLines[index]}
           showCursor={showCursors[index]}
           className={line.className}
+          isPreformatted={line.isPreformatted}
         />
       ))}
     </div>
@@ -100,4 +118,3 @@ const TypingText = ({ lines }: TypingTextProps) => {
 };
 
 export default TypingText;
-
