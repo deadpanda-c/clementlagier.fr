@@ -13,7 +13,7 @@ const MenuPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-green-400 font-mono p-8 flex flex-col">
-      <TerminalHeader isLoading={false} />
+      <TerminalHeader displayPrompt={false} pwd="/" />
       
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
