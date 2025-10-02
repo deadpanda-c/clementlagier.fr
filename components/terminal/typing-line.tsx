@@ -6,9 +6,29 @@ interface TypingLineProps {
   isCompleted: boolean;
   showCursor: boolean;
   className?: string;
+  isPreformatted?: boolean;
 }
 
-const TypingLine = ({ text, isActive, isCompleted, showCursor, className } : TypingLineProps) => {
+const TypingLine = ({ 
+  text, 
+  isActive, 
+  isCompleted, 
+  showCursor, 
+  className,
+  isPreformatted = false
+}: TypingLineProps) => {
+  if (isPreformatted) {
+    return (
+      <pre 
+        className={className} 
+        style={{ whiteSpace: 'pre', fontFamily: 'monospace' }}
+      >
+        {text}
+      </pre>
+    );
+  }
+
+  // Regular text with cursor
   return (
     <div className={className}>
       <span>{text}</span>
