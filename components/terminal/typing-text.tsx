@@ -9,6 +9,7 @@ interface TypingTextProps {
     delay: number;
     className?: string;
     isPreformatted?: boolean;
+    velocity?: number;
   }>;
   onComplete?: () => void;
 }
@@ -72,7 +73,7 @@ const TypingText = ({ lines, onComplete }: TypingTextProps) => {
               setActiveLineIndex(prev => prev + 1);
             }, 50);
           }
-        }, 20);
+        }, currentLine.velocity || 100);
         return () => clearInterval(typingInterval);
       }
     }, currentLine.delay);

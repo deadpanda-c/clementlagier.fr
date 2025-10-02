@@ -37,25 +37,29 @@ const HomePage = () => {
         text: "./about-me",
         delay: 0,
         className: cmd_style,
-        isPreformatted: false
+        isPreformatted: false,
+        velocity: 0.2
       },
       {
         text: "-----------------------------",
         delay: 200,
         className: "text-green-400 text-xs md:text-base",
-        isPreformatted: false
+        isPreformatted: false,
+        velocity: 0.2
       },
       {
         text: "I'm a software engineer who is passionate about building new things.",
         delay: 400,
         className: "text-white text-sm md:text-base",
-        isPreformatted: false
+        isPreformatted: false,
+        velocity: 0.2
       },
       {
         text: "-----------------------------",
         delay: 200,
         className: "text-green-400 text-xs md:text-base",
-        isPreformatted: false
+        isPreformatted: false,
+        velocity: 0.2
       },
     ],
     [
@@ -63,13 +67,15 @@ const HomePage = () => {
         text: "./skills",
         delay: 0,
         className: cmd_style,
-        isPreformatted: false
+        isPreformatted: false,
+        velocity: 0.2
       },
       {
         text: "React | TypeScript | Node.js | Python",
         delay: 200,
         className: "text-cyan-400 ml-2 text-sm md:text-xl",
-        isPreformatted: false
+        isPreformatted: false,
+        velocity: 0.2
       }
     ],
     [
@@ -77,13 +83,15 @@ const HomePage = () => {
         text: "./projects",
         delay: 0,
         className: cmd_style,
-        isPreformatted: false
+        isPreformatted: false,
+        velocity: 0.2
       },
       {
         text: "Building awesome terminal experiences...",
         delay: 200,
         className: "text-yellow-400 ml-2 text-sm md:text-xl",
-        isPreformatted: false
+        isPreformatted: false,
+        velocity: 0.2
       }
     ]
   ], []);
