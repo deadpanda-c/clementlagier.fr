@@ -10,6 +10,7 @@ interface TypingTextProps {
     className?: string;
     isPreformatted?: boolean;
     velocity?: number;
+    link?: string;
   }>;
   onComplete?: () => void;
 }
@@ -112,6 +113,7 @@ const TypingText = ({ lines, onComplete }: TypingTextProps) => {
           showCursor={showCursors[index]}
           className={line.className}
           isPreformatted={line.isPreformatted}
+          link={line.link}
         />
       ))}
     </div>

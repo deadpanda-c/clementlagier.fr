@@ -7,6 +7,7 @@ interface TypingLineProps {
   showCursor: boolean;
   className?: string;
   isPreformatted?: boolean;
+  link?: string;
 }
 
 const TypingLine = ({ 
@@ -15,7 +16,8 @@ const TypingLine = ({
   isCompleted, 
   showCursor, 
   className,
-  isPreformatted = false
+  isPreformatted = false,
+  link
 }: TypingLineProps) => {
   if (isPreformatted) {
     return (
@@ -28,10 +30,11 @@ const TypingLine = ({
     );
   }
 
+
   // Regular text with cursor
   return (
     <div className={className}>
-      <span>{text}</span>
+      <span><a href={link}>{text}</a></span>
       <span 
         className={`inline-block w-3 h-8 md:h-10 lg:h-12 bg-green-400 ml-1 transition-opacity ${
           showCursor && isActive && !isCompleted ? 'opacity-100' : 'opacity-0'
