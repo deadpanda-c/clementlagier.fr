@@ -64,23 +64,37 @@ const HomePage = () => {
     ],
     [
       {
-        text: "./skills",
+        text: "ls -l ./skills/",
         delay: 0,
         className: cmd_style,
         isPreformatted: false,
         velocity: 0.2
       },
       {
-        text: "React | TypeScript | Node.js | Python",
+        text: ".rw-r--r-- deadpanda deadpanda c",
         delay: 200,
-        className: "text-cyan-400 ml-2 text-sm md:text-xl",
+        className: "text-cyan-400 text-[0.75rem] md:text-xl",
+        isPreformatted: false,
+        velocity: 0.2,
+      },
+      {
+        text: ".rw-r--r-- deadpanda deadpanda c++",
+        delay: 200,
+        className: "text-cyan-400 text-[0.75rem] md:text-xl",
+        isPreformatted: false,
+        velocity: 0.2,
+      },
+      {
+        text: ".rw-r--r-- deadpanda deadpanda nextjs",
+        delay: 200,
+        className: "text-cyan-400 text-[0.75rem] md:text-xl",
         isPreformatted: false,
         velocity: 0.2
       }
     ],
     [
       {
-        text: "./projects",
+        text: "./projects --list --verbose",
         delay: 0,
         className: cmd_style,
         isPreformatted: false,
@@ -129,7 +143,7 @@ const HomePage = () => {
           <div key={commandSet.id} className="mb-6">
             <div className="flex gap-2 items-start">
               <Prompt pwd="/matrix" isMobile={isMobile} />
-              <div className="flex-1 w-full">
+              <div>
                 <TypingText 
                   lines={commandSet.lines}
                   onComplete={index === commandHistory.length - 1 ? handleCommandSetComplete : undefined}
