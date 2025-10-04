@@ -5,6 +5,9 @@ import { useEffect, useState, useMemo } from "react";
 import TerminalHeader from "@/components/terminal/terminal-header";
 import Prompt from "@/components/terminal/prompt";
 import TypingText from "@/components/terminal/typing-text";
+import TypingLine from "@/components/terminal/typing-line";
+import  useGithubRepos from "@/hooks/useGithubRepos";
+
 
 interface Command {
   text: string;
@@ -18,20 +21,79 @@ interface CommandSet {
   lines: Array<Command>;
 }
 
-
 const HomePage = () => {
   const [isMobile, setIsMobile] = useState(false);
+
   const [commandHistory, setCommandHistory] = useState<Array<CommandSet>>([]);
   const [currentCommandSetIndex, setCurrentCommandSetIndex] = useState(0);
-  
+  const repos = useGithubRepos();
   const cmd_style = "text-white flex ml-2 text-bold text-sm md:text-xl";
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
 
- const allCommandSets = useMemo(() => [
+
+const infos_system = useMemo(() => {
+  const infos = [
+    {
+      text: "[User]",
+      delay: 200,
+      className: cmd_style,
+      isPreformatted: false,
+      velocity: 0.2
+    },
+    {
+      text: "name = Clement Lagier",
+      delay: 200,
+      className: "text-white text-xl",
+      isPreformatted: false,
+      velocity: 0.2
+    },
+    {
+      text: "location = Moulins, France",
+      delay: 200,
+      className: "text-white text-xl",
+      isPreformatted: false,
+      velocity: 0.2
+    },
+    {
+      text: "email = clement.lagier@epitech.eu",
+      delay: 200,
+      className: "text-white text-xl hover:text-green-400 hover:underline cursor-pointer",
+      isPreformatted: false,
+      velocity: 0.2,
+      link: "mailto:clement.lagier@epitech.eu"
+    },
+    {
+      text: "github = https://github.com/deadpanda-c",
+      delay: 200,
+      className: "text-white text-xl hover:text-green-400 hover:underline cursor-pointer",
+      isPreformatted: false,
+      velocity: 0.2,
+      link: "https://github.com/deadpanda-c"
+    },
+    {
+      text: "linkedin = https://www.linkedin.com/in/clement-lagier",
+      delay: 200,
+      className: "text-white text-xl hover:text-green-400 hover:underline cursor-pointer",
+      isPreformatted: false,
+      velocity: 0.2,
+      link: "https://www.linkedin.com/in/clement-lagier"
+    },
+  ];
+  return infos;
+}, [cmd_style]);
+
+const allCommandSets = useMemo(() => {
+  const baseSets = [
     [
       {
         text: "./about-me",
@@ -91,8 +153,10 @@ const HomePage = () => {
         isPreformatted: false,
         velocity: 0.2
       }
-    ],
-    [
+    ]
+  ];
+
+    const projectSet = [
       {
         text: "./projects --list --verbose",
         delay: 0,
@@ -100,15 +164,34 @@ const HomePage = () => {
         isPreformatted: false,
         velocity: 0.2
       },
-      {
-        text: "Building awesome terminal experiences...",
-        delay: 200,
-        className: "text-yellow-400 ml-2 text-sm md:text-xl",
-        isPreformatted: false,
-        velocity: 0.2
-      }
-    ]
-  ], []);
+      ...repos.flatMap((repo, index) => [
+        {
+          text: "----------------",
+          delay: 200,
+          className: "text-green-400 text-xs md:text-base",
+          isPreformatted: false,
+          velocity: 0.2,
+        },
+        {
+          text: `PROJECT_NAME=${repo.name}`,
+          delay: 200,
+          className: "text-white text-sm md:text-lg",
+          isPreformatted: false,
+          velocity: 0.2,
+          link: `${repo.link}`
+        },
+        {
+          text: `DESCRIPTION=${repo.description || "No description"}`,
+          delay: 200,
+          className: "text-white text-[0.8rem] md:text-base break-all  whitespace-pre-wrap",
+          isPreformatted: false,
+          velocity: 0.2,
+        },
+      ])
+    ];
+   return [...baseSets, projectSet];
+
+  }, [repos, cmd_style]);
 
   useEffect(() => {
     
@@ -117,7 +200,7 @@ const HomePage = () => {
       id: 0,
       lines: allCommandSets[0]
     }]);
-  }, [setCommandHistory, allCommandSets]);
+  }, [allCommandSets]);
 
   const handleCommandSetComplete = () => {
     const nextIndex = currentCommandSetIndex + 1;
@@ -135,25 +218,83 @@ const HomePage = () => {
   };
 
 
+  const scrollToInfo = () => {
+    const infoSection = document.getElementById('info-section');
+    if (infoSection) {
+      infoSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-black text-green-400 font-mono p-8 flex flex-col">
-      <TerminalHeader displayPrompt={false} pwd="/matrix"/>
-      <div className="flex-1">
-        {commandHistory.map((commandSet, index) => (
-          <div key={commandSet.id} className="mb-6">
-            <div className="flex gap-2 items-start">
-              <Prompt pwd="/matrix" isMobile={isMobile} />
-              <div>
-                <TypingText 
-                  lines={commandSet.lines}
-                  onComplete={index === commandHistory.length - 1 ? handleCommandSetComplete : undefined}
-                />
+    <>
+      <style jsx global>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+      <div className="flex flex-row min-h-screen bg-black divide-x-2">
+
+      {/* Left side - Terminal */}
+      <div className="w-full md:w-3/5 overflow-x-auto bg-black text-green-400 font-mono p-4 md:p-8 flex flex-col md:overflow-y-auto md:h-screen scrollbar-hide">
+        <TerminalHeader displayPrompt={false} pwd="/matrix"/>
+        <div className="flex-1 min-w-0 break-words ">
+          {commandHistory.map((commandSet, index) => (
+            <div key={commandSet.id} className="mb-6">
+              <div className="flex gap-2 items-start">
+                <Prompt pwd="/matrix" isMobile={isMobile} />
+                <div>
+                  <TypingText 
+                    lines={commandSet.lines}
+                    onComplete={index === commandHistory.length - 1 ? handleCommandSetComplete : undefined}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+
+      {/* Right side - Info System */}
+      { !isMobile && (
+      <div 
+        id="info-section"
+        className="w-2/5 fixed right-0 top-16 h-screen bg-black p-4 p-8 flex flex-col font-mono"
+      >
+        <div className="w-full">
+          <div className="mb-4 flex">
+            <Prompt pwd="/matrix" isMobile={isMobile} />
+            <TypingText
+              lines={[
+                {
+                  text: "cat .deadpanda.conf",
+                  delay: 200,
+                  className: cmd_style,
+                  isPreformatted: false,
+                  velocity: 0.2
+                }
+              ]} 
+            />
+          </div>
+          {infos_system.map((info, index) => (
+            <div key={index} className="mb-4">
+              <div className="flex gap-2 items-start">
+                <div>
+                  <TypingText 
+                    lines={[info]}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+        )}
     </div>
+    </>
   );
 };
 
