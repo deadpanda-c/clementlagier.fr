@@ -457,21 +457,24 @@ const MatrixPage = () => {
         </div>
 
         {/* ── Right panel (desktop) ── */}
-        <InfoPanel
-          visible={panelVisible}
-          repos={repos}
-          reposLoading={reposLoading}
-          reposError={reposError}
-        />
+        {isMobile ? (
+          <MobileDrawer
+            open={drawerOpen}
+            onClose={() => setDrawerOpen(false)}
+            repos={repos}
+            reposLoading={reposLoading}
+          />
+        ) : (
+          <InfoPanel
+            visible={panelVisible}
+            repos={repos}
+            reposLoading={reposLoading}
+            reposError={reposError}
+          />
+        )}
       </div>
 
       {/* ── Mobile drawer ── */}
-      <MobileDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        repos={repos}
-        reposLoading={reposLoading}
-      />
     </>
   );
 };
