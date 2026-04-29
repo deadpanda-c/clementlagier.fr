@@ -1,106 +1,93 @@
-'use-client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import TypingLine from '@/components/terminal/typing-line';
+import { useEffect, useRef, useState, useCallback } from "react";
+import TypingLine from "@/components/terminal/typing-line";
+
+export interface TypingTextLine {
+  text: string;
+  delay: number;
+  className?: string;
+  isPreformatted?: boolean;
+  velocity?: number;
+  link?: string;
+}
 
 interface TypingTextProps {
-  lines: Array<{
-    text: string;
-    delay: number;
-    className?: string;
-    isPreformatted?: boolean;
-    velocity?: number;
-    link?: string;
-  }>;
+  lines: TypingTextLine[];
   onComplete?: () => void;
 }
 
 const TypingText = ({ lines, onComplete }: TypingTextProps) => {
-  const [displayedLines, setDisplayedLines] = useState(lines.map(() => ''));
+  const [displayedLines, setDisplayedLines] = useState<string[]>(() =>
+    lines.map(() => ""),
+  );
   const [activeLineIndex, setActiveLineIndex] = useState(0);
-  const [showCursors, setShowCursors] = useState(lines.map(() => false));
-  const [completedLines, setCompletedLines] = useState(lines.map(() => false));
+  const [completedLines, setCompletedLines] = useState<boolean[]>(() =>
+    lines.map(() => false),
+  );
+  const [cursorVisible, setCursorVisible] = useState(true);
+
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  // Single blinking cursor for the active line
+  useEffect(() => {
+    const id = setInterval(() => setCursorVisible((v) => !v), 530);
+    return () => clearInterval(id);
+  }, []);
+
+  const advanceLine = useCallback((index: number) => {
+    setCompletedLines((prev) => {
+      const next = [...prev];
+      next[index] = true;
+      return next;
+    });
+    setTimeout(() => setActiveLineIndex(index + 1), 80);
+  }, []);
 
   useEffect(() => {
     if (activeLineIndex >= lines.length) {
-      // All lines completed, notify parent
-      if (onComplete) {
-        setTimeout(() => onComplete(), 500);
+      if (onCompleteRef.current) {
+        setTimeout(() => onCompleteRef.current?.(), 400);
       }
       return;
     }
 
-    const currentLine = lines[activeLineIndex];
-    const startTimeout = setTimeout(() => {
-      // Mark line as active
-      setShowCursors(prev => {
-        const newCursors = [...prev];
-        newCursors[activeLineIndex] = true;
-        return newCursors;
-      });    
-      
-      if (currentLine.isPreformatted) {
-        setDisplayedLines(prev => {
-          const newLines = [...prev];
-          newLines[activeLineIndex] = currentLine.text;
-          return newLines;
+    const line = lines[activeLineIndex];
+
+    const startId = setTimeout(() => {
+      if (line.isPreformatted) {
+        setDisplayedLines((prev) => {
+          const next = [...prev];
+          next[activeLineIndex] = line.text;
+          return next;
         });
-        setCompletedLines(prev => {
-          const newCompleted = [...prev];
-          newCompleted[activeLineIndex] = true;
-          return newCompleted;
-        });
-        setTimeout(() => {
-          setActiveLineIndex(prev => prev + 1);
-        }, 50);
-      } else {
-        let currentIndex = 0;
-        const typingInterval = setInterval(() => {
-          if (currentIndex <= currentLine.text.length) {
-            setDisplayedLines(prev => {
-              const newLines = [...prev];
-              newLines[activeLineIndex] = currentLine.text.slice(0, currentIndex);
-              return newLines;
-            });
-            currentIndex++;
-          } else {
-            clearInterval(typingInterval);
-            setCompletedLines(prev => {
-              const newCompleted = [...prev];
-              newCompleted[activeLineIndex] = true;
-              return newCompleted;
-            });
-            setTimeout(() => {
-              setActiveLineIndex(prev => prev + 1);
-            }, 50);
-          }
-        }, currentLine.velocity || 100);
-        return () => clearInterval(typingInterval);
+        advanceLine(activeLineIndex);
+        return;
       }
-    }, currentLine.delay);
 
-    return () => clearTimeout(startTimeout);
-  }, [activeLineIndex, lines, onComplete]);
+      const charInterval = line.velocity ?? 40;
+      let charIndex = 0;
 
-  // Blink cursors
-  useEffect(() => {
-    const cursorIntervals = lines.map((_, index) => {
-      return setInterval(() => {
-        setShowCursors(prev => {
-          const newCursors = [...prev];
-          // Only blink if line is not completed
-          if (!completedLines[index]) {
-            newCursors[index] = !newCursors[index];
-          } else {
-            newCursors[index] = false;
-          }
-          return newCursors;
+      const typingId = setInterval(() => {
+        charIndex++;
+        setDisplayedLines((prev) => {
+          const next = [...prev];
+          next[activeLineIndex] = line.text.slice(0, charIndex);
+          return next;
         });
-      }, 500);
-    });
 
-    return () => cursorIntervals.forEach(interval => clearInterval(interval));
-  }, [completedLines, lines]);
+        if (charIndex >= line.text.length) {
+          clearInterval(typingId);
+          advanceLine(activeLineIndex);
+        }
+      }, charInterval);
+
+      return () => clearInterval(typingId);
+    }, line.delay);
+
+    return () => clearTimeout(startId);
+  }, [activeLineIndex, lines, advanceLine]);
 
   return (
     <div className="flex flex-col">
@@ -110,7 +97,7 @@ const TypingText = ({ lines, onComplete }: TypingTextProps) => {
           text={displayedLines[index]}
           isActive={index === activeLineIndex}
           isCompleted={completedLines[index]}
-          showCursor={showCursors[index]}
+          showCursor={cursorVisible}
           className={line.className}
           isPreformatted={line.isPreformatted}
           link={line.link}
