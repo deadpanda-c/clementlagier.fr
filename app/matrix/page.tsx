@@ -250,7 +250,7 @@ const MatrixPage = () => {
     loading: reposLoading,
     error: reposError,
   } = useGithubRepos({
-    username: "deadpanda",
+    username: "deadpanda-c",
     limit: 6,
   });
 
@@ -289,14 +289,15 @@ const MatrixPage = () => {
           ]
         : [
             {
-              text: "NAME                  LANG          ★",
+              text: "NAME                  LANG",
               delay: 0,
               className: `${OUTPUT_BASE} text-green-600 text-[10px] md:text-xs`,
               isPreformatted: false,
               velocity: 10,
             },
             ...repos.map((repo) => ({
-              text: `${repo.name.padEnd(22)}${(repo.language ?? "N/A").padEnd(14)}${repo.stars}`,
+              // add gap between name and language, and pad language to align
+              text: `${repo.name.padEnd(30)}${(repo.language ?? "N/A").padEnd(22)}`,
               delay: 0,
               className: `${OUTPUT_BASE} hover:text-green-200`,
               isPreformatted: false,
@@ -452,12 +453,6 @@ const MatrixPage = () => {
               </div>
             ))}
             <div ref={terminalEndRef} />
-          </div>
-
-          {/* Blinking prompt at bottom */}
-          <div className="flex items-center mt-2">
-            <Prompt pwd="/matrix" isMobile={isMobile} />
-            <span className="ml-1 inline-block w-2 h-4 bg-green-400 animate-pulse opacity-70" />
           </div>
         </div>
 

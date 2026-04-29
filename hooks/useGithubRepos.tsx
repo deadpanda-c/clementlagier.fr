@@ -16,7 +16,6 @@ export interface GithubRepo {
 
 interface UseGithubReposOptions {
   username?: string;
-  pinnedOnly?: boolean;
   limit?: number;
 }
 
@@ -30,7 +29,7 @@ interface UseGithubReposResult {
 const useGithubRepos = (
   options: UseGithubReposOptions = {},
 ): UseGithubReposResult => {
-  const { username = "deadpanda", pinnedOnly = false, limit = 6 } = options;
+  const { username = "deadpanda", limit = 6 } = options;
 
   const [repos, setRepos] = useState<GithubRepo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,13 +67,12 @@ const useGithubRepos = (
 
         if (!cancelled) {
           const mapped: GithubRepo[] = data
-            .filter((repo: any) => !repo.fork)
+            .filter((repo: any) => !repo.fork && repo.name !== username)
             .slice(0, limit)
             .map((repo: any) => ({
-              name: repo.name,
+              name: repo.name ?? "Unknown",
               description: repo.description,
               language: repo.language,
-              stars: repo.stargazers_count,
               forks: repo.forks_count,
               url: repo.html_url,
               author: repo.owner.login,
